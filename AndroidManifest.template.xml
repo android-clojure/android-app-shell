@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.example.droid1"
+          android:versionCode="{{version-code}}"
+          android:versionName="{{version-name}}" >
+
+  <uses-sdk android:minSdkVersion="15"
+            android:targetSdkVersion="{{target-version}}" />
+
+  <application android:name="neko.App"
+               android:icon="@drawable/ic_launcher"
+               android:label="droid1">
+    <!-- activity と application に同じキーで別の値を入れてた
+         meta-data を作っている
+         別のものとして扱われるか試す為 -->
+    <meta-data android:name="foo"
+               android:value="1"/>
+    <meta-data android:name="bar"
+               android:value="2"/>
+    <!-- <meta-data android:name="xxx"
+                    android:resource="@string/abc"/>
+        という風にも書けるみたい -->
+
+    <activity android:name=".SplashActivity"
+              android:theme="@android:style/Theme.Translucent.NoTitleBar">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+
+    <!-- プロセスの外から見える様にする必用があるのは
+         起動したときに最初に出てくるアクティビティだけじゃないのか?
+         それなら、全部の Activity を書かなくていいハズ
+         と思っていたけど、違った
+
+         まず、他のアプリから Intent を受けて特定の Activity を起動させる場合がある
+         カメラとか
+         これは、外から見える必用があるので書く理由は分かる
+
+         でも、それ以外のも書く必用がある
+         これは、プロセスがメモリの状況によって殺されるので、
+         アプリの状態を常に復元できる様にする必用があるから。
+         なので、全部の Activity(のonCreate? もっと前もあるかも)
+         がエントリポイントになる。
+
+         でも、これだとプログラムを開始する位置しか決められない。
+         状態を保存する為のデータも必用になる。
+         その為に Bundle(Intent) があって Serializable になっている。
+
+         と、原理的には不可能な事はやっていないけど、
+         Serializable を満たさないといけないので、
+         クロージャ使って継続を保存したりとか難しいなと思う。
+         (イベントドリブンなので、これが一番やりたいのだけど)
+         なので、どんなプログラミング言語を使っても、
+         面倒臭くなりそうな気がする。Javaだから…というのも特にない気がする。
+         マクロが使えればどうにか出来る部分はあるかもしれないけど。
+
+         もしマクロの機能だけ使えて、ランタイムはその言語のものは使わないで
+         ほぼ Java のものだけに出来ればいいかも。
+      -->
+    <activity android:name=".MainActivity">
+      <intent-filter>
+        <action android:name='com.example.droid1.MAIN'/>
+        <category android:name='android.intent.category.DEFAULT'/>
+      </intent-filter>
+
+      <meta-data android:name="foo"
+                 android:value="10"/>
+      <meta-data android:name="bar"
+                 android:value="20"/>
+    </activity>
+
+    <activity android:name=".Activity1" />
+    <activity android:name=".Activity2" />
+
+
+    <service android:name=".Service"/>
+    <!-- ↑がないと .startService したときに↓の様なのが出る
+         W/ActivityManager( 1445): Unable to start service Intent { cmp=com.example.droid1/.Service } U=0: not found
+
+         https://developer.android.com/guide/components/intents-filters.html#Types
+         サービスはインテントフィルタを設定しない事
+         常に明示的インテントで開始する事
+      -->
+
+    <!-- https://developer.android.com/guide/topics/providers/content-provider-creating.html#ContentURI -->
+    <!-- <provider android:authorities="com.example.droid1.provider" -->
+    <!--           android:name=".Provider" -->
+    <!--           android:exported="false" /> -->
+  </application>
+
+  <uses-permission android:name="android.permission.READ_CALENDAR"/>
+  <uses-permission android:name="android.permission.WRITE_CALENDAR"/>
+
+  <uses-permission android:name="android.permission.CAMERA"/>
+
+  <uses-permission android:name="android.permission.READ_CONTACTS"/>
+  <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+  <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+
+  <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+  <uses-permission android:name="android.permission.READ_USER_DICTIONARY"/>
+  <uses-permission android:name="android.permission.WRITE_USER_DICTIONARY"/>
+  <uses-permission android:name="android.permission.GET_TASKS" />
+  {{#debug-build}}
+  <!-- Inside this section the permission will work only in debug builds (this is -->
+  <!-- needed for remote REPL). If your application logic requires Internet -->
+  <!-- permission too, move it out of the section. -->
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+  {{/debug-build}}
+</manifest>
