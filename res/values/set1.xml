@@ -1,0 +1,130 @@
+<resources>
+  <!-- res/values/ には任意のファイル名で
+       複数のデータ型を混ぜたリソースのXMLが
+       いくつでも置ける
+
+       でも、このファイル名がリソース名の名前空間になったりはしないし
+       名前空間を作る事も出来ない様なので
+       リソース名は全部のXMLで重複しない様にする必用がある
+
+       それでも、コンポーネント毎に分けられるなら分けた方がいいかも
+
+       型毎にファイルを分けるのは、リソース名の重複が確認し易いメリットはあるけど
+       重複したときにあ aapt がエラー出してくれると思うので、
+       その事を理解していて、エラーの意味が分かるならやらなくていいと思う
+    -->
+  
+  <!-- .getBoolean -->
+  <bool name="t">true</bool>
+  <bool name="f">false</bool>
+  <!-- ↓とか書くと、名前が重複して多分エラーになる -->
+  <!-- <bool name="t">false</bool> -->
+
+
+  <!-- .getInteger -->
+  <integer name="int_test">10</integer>
+
+  <!-- http://androidxref.com/7.0.0_r1/xref/packages/apps/TvSettings/Settings/res/values/floats.xml -->
+  <!-- http://stackoverflow.com/questions/29984969/android-float-double-resource-type -->
+  <!-- typeには好きな文字が使える、読む側がfloatして解釈すればいい
+       という考えみたい
+    -->
+  <item name="float_test" type="my_float1" format="float">2.4</item>
+
+  <!-- http://androidxref.com/7.0.0_r1/xref/packages/apps/TV/res/values/floats.xml -->
+  <!-- http://stackoverflow.com/questions/3282390/add-floating-point-value-to-android-resources-values -->
+  <!-- .getResources().getValue().getFloat() -->
+  <!-- error!
+       <item name="float_test" type="my_float2" format="dimen">4.2</item> -->
+
+  <!-- .getIdentifier?? -->
+  <item type="id" name="id_test" />
+
+  <!-- .getString, .getText -->
+  <string name="foo">bar</string>
+  <!-- https://developer.android.com/guide/topics/resources/string-resource.html#FormattingAndStyling -->
+  <string name="format_test">s:%1$s, d:%2$d, t:%3$tT</string>
+
+  <!-- .getQuantityString, .getQuantityText -->
+  <plurals name="plurals_test">
+    <!-- 数え方のルールみたいなもの
+         ロケール依存みたい
+         quantity の取り得る値は決っているけど -->
+    <item quantity="one">A dog</item>
+    <item quantity="other">Some dogs</item>
+  </plurals>
+
+  <!-- .getDimension, .getdimensionpixeloffset, .getDimensionPixelSize -->
+  <dimen name="width_dp">100dp</dimen>
+  <dimen name="width_sp">100sp</dimen>
+  <dimen name="width_pt">100pt</dimen>
+  <dimen name="width_px">100px</dimen>
+  <dimen name="width_mm">100mm</dimen>
+  <dimen name="width_in">100in</dimen>
+
+  <!-- .getColor -->
+  <color name="red">#ff0000</color>
+  <color name="clear_red">#aaff0000</color>
+
+  <!-- .getIntArray -->
+  <integer-array name="integers">
+    <item>0</item>
+    <item>1</item>
+    <item>@integer/int_test</item> 
+  </integer-array>
+
+  <!-- .getStringArray, .getTextArray -->
+  <string-array name="string">
+    <item>a</item>
+    <item>b</item>
+    <item>@string/foo</item>
+  </string-array>
+
+  <!-- .obtainTypedArray -->
+  <array name="untyped_array">
+    <item>foo</item>
+    <item>bar</item>
+    <item>baz</item>
+  </array>
+  <!-- https://developer.android.com/guide/topics/resources/more-resources.html#TypedArray -->
+  <array name="colors">
+    <item>#FFFF0000</item>
+    <item>#FF00FF00</item>
+    <item>#FF0000FF</item>
+  </array>
+
+  <!-- 適用方法
+       https://sites.google.com/site/shareandroid/ad/dg/framework/ui/style/applying
+       style の確認は
+       AndroidStudio のレイアウトエディタで確認出来るならその方が簡単だと思う
+
+       https://developer.android.com/guide/topics/resources/style-resource.html
+       https://developer.android.com/guide/topics/ui/themes.html
+    -->
+  <style name="style1">
+    <!-- この場合の android: は xmlns と揃えてこうなっているのかな?
+         でもこれは属性値なので XML的には xmlns とは関係ないハズ
+      -->
+    <item name="android:background">#ffffff</item>
+    <item name="android:textColor">#000000</item>
+  </style>
+  <style name="style2" parent="@style/style1">
+    <!-- https://sites.google.com/site/shareandroid/ad/dg/framework/ui/style/definestyles
+         自作styleの継承は、なぜかココでは推奨されていなかった
+         まぁでも実験なので問題ない
+      -->
+    <item name="android:textColor">#888800</item>
+  </style>
+  <style name="style1.v2">
+    <!-- こっちは推奨されていた継承方法 -->
+    <item name="android:textColor">#008888</item>
+  </style>
+
+  <!-- http://stackoverflow.com/questions/26182486/custom-resource-item-type-for-xml-constant
+       独自のデータ型(itemタグのtype属性)をXML内で参照する事はできない
+       その意味を解釈するプログラムがないから当然だろうけど
+    -->
+  <!-- itemタグのtype属性 に使える値の集合が分からない
+       integer, string, dimen とかタグの名前全部?
+    -->
+</resources>
